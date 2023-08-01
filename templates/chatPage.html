@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Login V2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon.ico')}}" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='fonts/iconic/css/material-design-iconic-font.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='vendor/animsition/css/animsition.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='vendor/daterangepicker/daterangepicker.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css')}}">
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css')}}"> -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/chatPage.css')}}">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Page header start -->
+        <div class="page-title">
+            <div class="row gutters">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <h5 class="title text-white">Hello, {{username}} !</h5>
+                    <h6 id='username' style="display:none">{{username}}</h6>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 justify-content-end d-flex">
+                    <a class='logout' href='/'><i class="fa fa-sign-out fa-2x " aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- Page header end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+
+            <!-- Row start -->
+            <div class="row gutters">
+
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                    <div class="card m-0">
+
+                        <!-- Row start -->
+                        <div class="row no-gutters">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
+                                <div class="users-container p-0">
+                                    <div class="selected-user">
+                                        <span class="name" style="margin-right: 56%;">Chat List</span>
+                                        <button type="button" class="btn shadow-none add_chat" id='add_modal_show'>
+                                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                        </button>
+                                        <div class="modal" id="connectToChat">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Add chat</h5>
+                                                        <button type="button" id='add_modal_close'
+                                                            class="btn btn-secondary hideModal">Close</button>
+                                                    </div>
+                                                    <form id='send_token'>
+                                                        <div class="modal-body">
+                                                            <input type='text' id="token_input"
+                                                                placeholder="Input token"></input>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" id="send_token_msg"
+                                                                class="btn btn-primary">Add</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form id="select_chat">
+                                        <ul class="chats">
+                                            {% for chat in chatList %}
+                                            <li class="person">
+                                                <button type="submit" class="name-time non-selected"
+                                                    data-selected='True' data-chatToken={{chat.token}}>
+                                                    {{chat.name}}
+                                                </button>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9">
+                                <div class="selected-user">
+                                    <span style="margin-right: 79%;">To: <span class="name"
+                                            id="chat_label"></span></span>
+                                    <button type="button" class="btn shadow-none add_chat" id='key_modal_show'>
+                                        <i class="fa fa-key" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="modal" id="enter_pass">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Enter secret key</h5>
+                                                    <button type="button" id="key_modal_close"
+                                                        class="btn btn-secondary hideModal">Close</button>
+                                                </div>
+                                                <form id='send_secret_key'>
+                                                    <div class="modal-body">
+                                                        <input type='text' id="key_input"
+                                                            placeholder="Enter secret key"></input>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" id="send_key"
+                                                            class="btn btn-primary">Decrypt</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chat-container">
+                                    <ul id="messages" class="chat-box chatContainerScroll">
+                                    </ul>
+                                    <form id='form_send_msg' autocomplete="off" class="message_control" novalidate>
+                                        <div class="form-group mb-0" style="width: 92%;">
+                                            <input class="form-control" type="text" id="message_input"
+                                                placeholder="Type your message here..."></input>
+                                        </div>
+                                        <button type="submit" id="send_msg" class="btn btn-sucsess">send</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row end -->
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- Row end -->
+
+        </div>
+        <!-- Content wrapper end -->
+
+    </div>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/animsition/js/animsition.min.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/select2/select2.min.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/daterangepicker/moment.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='vendor/daterangepicker/daterangepicker.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='vendor/countdowntime/countdowntime.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap-modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/aes.js') }}"></script>
+    <script>
+        // INIT
+        var myPassword = "123";
+
+        // PROCESS
+        // var encrypted = CryptoJS.AES.encrypt(myString, myPassword);
+        // var decrypted = CryptoJS.AES.decrypt(encrypted.toString(), 'sdasdas');
+        // console.log(myString);
+        // console.log(encrypted.toString());
+        // console.log(decrypted.toString(CryptoJS.enc.Utf8));
+        $(document).ready(() => {
+            $('#form_send_msg').on('submit', (e) => {
+                e.preventDefault();
+            })
+
+            const socket = io.connect('http://127.0.0.1:5000');
+            const username = $('#username').text();
+            socket.on('connect', () => {
+                console.log({ 'chatName': $('.selected').text(), 'username': 'service message', 'text': 'User - ' + username + ' has connected' });
+            });
+            $("#send_msg").on('click', () => {
+                if ($('#message_input').val().length > 0) {
+
+                    socket.send({
+                        'chatName': $('.selected').text().replace('/n', '').replace(' ', ''),
+                        'text': CryptoJS.AES.encrypt($('#message_input').val(), myPassword).toString(),
+                        'username': username
+                    });
+                    $('#message_input').val('');
+                }
+            });
+            socket.on('message', data => {
+                if (data.text.length > 0) {
+                    console.log(data);
+                    if (data.username === username) {
+                        $('#messages').append(
+                            '<li class="chat-right">' +
+                            '<div class="chat-name">' + data.username + '</div>' +
+                            '<div class="chat-avatar"> <div class="chat-text">' +
+                            CryptoJS.AES.decrypt(data.text, myPassword).toString(CryptoJS.enc.Utf8) +
+                            '</div></div></li>')
+                    }
+                    else {
+                        $('#messages').append(
+                            '<li class="chat-left"> <div class="chat-avatar">' +
+                            '<div class="chat-name">' + data.username + '</div> </div>' +
+                            '<div class="chat-text">' + data.text + '</div></li>')
+                    }
+                    console.log('recieved message');
+                }
+
+            })
+            //работа с добавлением нового чата по токену
+            $('#send_token').on('submit', (e) => {
+                e.preventDefault();
+            })
+
+            $("#send_token_msg").on('click', () => {
+                socket.emit('addChat', {
+                    'token': $('#token_input').val(),
+                    'username': username
+                });
+                $('#token_input').val('');
+            });
+
+            socket.on('addChat', data => {
+                console.log(data);
+                $('.chats').append(
+                    '<li class="person"><button type="submit" class="name-time non-selected selected"' +
+                    'data-selected="False" data-chatToken=' + data.token + '>' + data.name + '' +
+                    '</button></li>'
+                )
+            })
+            //конец работы с добавлением нового чата по токену
+
+            //переход в чат при нажатии на соответствующую кнопку
+            $('#select_chat').on('submit', (e) => {
+                e.preventDefault();
+            })
+
+            $(".non-selected").on('click', function (e) {
+                socket.emit('selectChat', {
+                    'token': $(e.currentTarget).attr('data-chatToken')
+                });
+                $('#chat_label').html($(e.currentTarget).text())
+                $('.selected').removeClass('selected')
+                $(e.currentTarget).addClass('selected')
+                console.log($(e.currentTarget).attr('data-chatToken'))
+            });
+
+            socket.on('selectChat', data => {
+                $('#messages').empty()
+                for (let i = 1; i < Object.keys(data).length; i++) {
+                    if (data[i].userName == username) {
+                        console.log(data[i].userName)
+                        $('#messages').append(
+                            '<li class="chat-right">' +
+                            '<div class="chat-name">' + data[i].userName + '</div>' +
+                            '<div class="chat-avatar"> <div class="chat-text">' + data[i].message + '</div></div></li>')
+                    }
+                    else {
+                        $('#messages').append(
+                            '<li class="chat-left"> <div class="chat-avatar">' +
+                            '<div class="chat-name">' + data[i].userName + '</div> </div>' +
+                            '<div class="chat-text">' + data[i].message + '</div></li>')
+                    }
+                }
+            })
+
+        });
+        //переход в чат при нажатии на соответствующую кнопку
+
+        //показать/скрыть модальник
+        $('#add_modal_show').click(function () {
+            $('#connectToChat').show();
+        })
+        $('#add_modal_close').click(function () {
+            $('#connectToChat').hide()
+        })
+        $('#key_modal_show').click(function () {
+            $('#enter_pass').show();
+        })
+        $('#key_modal_close').click(function () {
+            $('#enter_pass').hide()
+        })
+        //конец обработчиков модальника
+
+        //Расшифровывающий блок
+        $('#send_secret_key').on('submit', (e) => {
+            e.preventDefault();
+            var key = $('#key_input').val();
+            let messages = document.querySelectorAll('.chat-left .chat-text');
+            console.log(messages)
+            messages.forEach(element => {
+                decMess = $(element).text()
+                $(element).text(CryptoJS.AES.decrypt(decMess, key).toString(CryptoJS.enc.Utf8))
+            });
+        })
+
+        //Конец расшифровывающего блока 
+
+    </script>
+</body>
+
+</html>
